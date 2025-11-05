@@ -28,7 +28,6 @@ export default function NotesClient({ initialPage, initialSearch, perPage }: Pro
   const router = useRouter();
   const sp = useSearchParams();
 
-  // синхронізуємо URL з локальним станом
   useEffect(() => {
     const params = new URLSearchParams(sp.toString());
     params.set("page", String(page));

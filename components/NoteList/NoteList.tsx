@@ -27,7 +27,7 @@ export default function NoteList({ items }: NoteListProps) {
           <div className={css.footer}>
             <span className={css.tag}>{n.tag}</span>
 
-            {/* Посилання на деталі */}
+            {}
             <Link className={css.link} href={`/notes/${n.id}`}>View details</Link>
 
             <button className={css.button} disabled={isPending} onClick={() => mutate(n.id)}>

@@ -6,7 +6,6 @@ const API = "https://notehub-public.goit.study/api";
 const token = process.env.NEXT_PUBLIC_NOTEHUB_TOKEN as string | undefined;
 
 if (!token) {
-  // попередження: без токена запити падатимуть
   console.warn("NEXT_PUBLIC_NOTEHUB_TOKEN is not set. API requests will fail.");
 }
 

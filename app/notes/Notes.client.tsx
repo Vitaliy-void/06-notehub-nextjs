@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDebounce } from "use-debounce";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { fetchNotes } from "@/lib/api";
@@ -44,7 +44,7 @@ export default function NotesClient({ initialPage, initialSearch, perPage }: Pro
     placeholderData: keepPreviousData,
   });
 
-  const notes = data?.data ?? [];
+  const notes = data?.notes ?? [];
   const totalPages = data?.totalPages ?? 0;
 
   return (
@@ -58,7 +58,7 @@ export default function NotesClient({ initialPage, initialSearch, perPage }: Pro
           }}
         />
         {totalPages > 1 && (
-          <Pagination pageCount={totalPages} currentPage={page} onPageChange={(p) => setPage(p)} />
+          <Pagination pageCount={totalPages} currentPage={page} onPageChange={setPage} />
         )}
         <button className={css.button} onClick={() => setIsModal(true)}>
           Create note +
@@ -67,13 +67,15 @@ export default function NotesClient({ initialPage, initialSearch, perPage }: Pro
 
       {isLoading && <p style={{ padding: 16 }}>Loading…</p>}
       {isError && (
-        <p style={{ padding: 16, color: "crimson" }}>{(error as Error)?.message ?? "Request error"}</p>
+        <p style={{ padding: 16, color: "crimson" }}>
+          {(error as Error)?.message ?? "Request error"}
+        </p>
       )}
 
       {notes.length ? <NoteList items={notes} /> : !isLoading && <p style={{ padding: 16 }}>No notes yet</p>}
 
       <Modal isOpen={isModal} onClose={() => setIsModal(false)}>
-        <NoteForm onCancel={() => setIsModal(false)} onSuccess={() => setIsModal(false)} />
+        <NoteForm onCancel={() => setIsModal(false)} />
       </Modal>
     </div>
   );

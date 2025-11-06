@@ -9,7 +9,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export interface NoteFormProps {
   onCancel: () => void;
-  onSuccess?: () => void;
 }
 
 interface NoteFormValues {
@@ -21,22 +20,29 @@ interface NoteFormValues {
 const Schema = Yup.object({
   title: Yup.string().min(3).max(50).required(),
   content: Yup.string().max(500),
-  tag: Yup.mixed<NoteTag>().oneOf(["Todo","Work","Personal","Meeting","Shopping"]).required(),
+  tag: Yup.mixed<NoteTag>().oneOf(["Todo", "Work", "Personal", "Meeting", "Shopping"]).required(),
 });
 
-export default function NoteForm({ onCancel, onSuccess }: NoteFormProps) {
+export default function NoteForm({ onCancel }: NoteFormProps) {
   const qc = useQueryClient();
+
   const { mutateAsync, isPending } = useMutation({
     mutationFn: createNote,
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["notes"] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["notes"] });
+      onCancel();
+    },
   });
 
   const initialValues: NoteFormValues = { title: "", content: "", tag: "" };
 
   const onSubmit = async (values: NoteFormValues, helpers: FormikHelpers<NoteFormValues>) => {
-    await mutateAsync({ title: values.title.trim(), content: values.content.trim(), tag: values.tag as NoteTag });
+    await mutateAsync({
+      title: values.title.trim(),
+      content: values.content.trim(),
+      tag: values.tag as NoteTag,
+    });
     helpers.resetForm();
-    onSuccess?.();
   };
 
   return (

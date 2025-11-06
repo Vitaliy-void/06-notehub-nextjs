@@ -4,13 +4,16 @@ import NotesClient from "./Notes.client";
 
 const PER_PAGE = 12;
 
+type NotesSearchParams = { page?: string; search?: string };
+
 export default async function NotesPage({
   searchParams,
 }: {
-  searchParams: { page?: string; search?: string };
+  searchParams: Promise<NotesSearchParams>;
 }) {
-  const page = Math.max(1, Number(searchParams.page ?? "1"));
-  const search = (searchParams.search ?? "").trim();
+  const sp = await searchParams;
+  const page = Math.max(1, Number(sp.page ?? "1"));
+  const search = (sp.search ?? "").trim();
 
   const qc = new QueryClient();
   await qc.prefetchQuery({

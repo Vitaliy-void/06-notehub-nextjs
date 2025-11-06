@@ -21,7 +21,7 @@ export interface FetchNotesParams {
 }
 
 export interface FetchNotesResponse {
-  data: Note[];
+  notes: Note[];
   page: number;
   perPage: number;
   totalPages: number;
@@ -34,29 +34,31 @@ export interface CreateNoteBody {
   tag: NoteTag;
 }
 
-export interface CreateNoteResponse { data: Note; }
-export interface DeleteNoteResponse { data: Note; }
-export interface FetchNoteResponse { data: Note; }
-
-export async function fetchNotes(params: FetchNotesParams = {}): Promise<FetchNotesResponse> {
+/** GET /notes ? page & perPage & search */
+export async function fetchNotes(
+  params: FetchNotesParams = {},
+): Promise<FetchNotesResponse> {
   const { page = 1, perPage = 12, search = "" } = params;
-  const resp = await http.get<FetchNotesResponse>("/notes", {
+  const res = await http.get<FetchNotesResponse>("/notes", {
     params: { page, perPage, ...(search ? { search } : {}) },
   });
-  return resp.data;
+  return res.data;
 }
 
-export async function createNote(body: CreateNoteBody): Promise<CreateNoteResponse> {
-  const resp = await http.post<CreateNoteResponse>("/notes", body);
-  return resp.data;
+/** POST /notes -> Note */
+export async function createNote(body: CreateNoteBody): Promise<Note> {
+  const res = await http.post<Note>("/notes", body);
+  return res.data;
 }
 
-export async function deleteNote(id: string): Promise<DeleteNoteResponse> {
-  const resp = await http.delete<DeleteNoteResponse>(`/notes/${id}`);
-  return resp.data;
+/** DELETE /notes/:id -> Note */
+export async function deleteNote(id: string): Promise<Note> {
+  const res = await http.delete<Note>(`/notes/${id}`);
+  return res.data;
 }
 
-export async function fetchNoteById(id: string): Promise<FetchNoteResponse> {
-  const resp = await http.get<FetchNoteResponse>(`/notes/${id}`);
-  return resp.data;
+/** GET /notes/:id -> Note */
+export async function fetchNoteById(id: string): Promise<Note> {
+  const res = await http.get<Note>(`/notes/${id}`);
+  return res.data;
 }
